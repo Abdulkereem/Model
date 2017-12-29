@@ -395,8 +395,10 @@ def EntPost(post_id):
 
 
 
-@app.route('/create')
-def create():
+@app.before_first_request
+def before_first_request():
+	# db.drop_all()
+	db.configure_mappers()
 	db.create_all()
 	return "database created"
 
