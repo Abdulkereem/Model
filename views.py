@@ -1,5 +1,5 @@
 from main import app
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, flash
 from models import User, Politics, Technology, General, Entertainment, Sport 
 from formhandler import LoginForm, RegisterForm
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -30,12 +30,33 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-	#post = Sport.query.order_by(Sport.date_posted.desc()).all()
+	post = General.query.order_by(General.date_posted.desc()).first()
 
+	#return post[0].post_title
 	#return post.post_title
 
 	
 	return render_template('index.html',post=post)
+
+
+@app.route('/Political-Upadates')
+def politics():
+	return render_template('politics.html')
+
+
+@app.route('/Sports-Updates')
+def Sport():
+	return render_template('sport.html')
+
+@app.route('/Technology-Updates')
+def Technology():
+	return render_template('tech.html')
+
+
+@app.route('/Entertainment-Updates')
+def Entertainment():
+	return render_template('entertainment.html')
+
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -94,14 +115,31 @@ def dashboard():
 	content_posted = current_user.post_counter
 	posthandler = current_user.daily_post
 	
-	if posthandler == 0:
+	
+	if posthandler == 10:
+		email = current_user.email
+		my_user = db.session.query(User).filter_by(email=email).first()
+		if my_user is None:
+			pass
+		my_user.withdraw="yes"
+		db.session.add(my_user) #this doesn't create a new user, it updates the existing
+		db.session.commit()
 		post_availability = "Not Available"
 		return render_template('dashboard.html',mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted, post_availability=post_availability)
-	elif posthandler == 1:
-		post_availability = "Available"
-		return render_template('dashboard.html',mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted, post_availability=post_availability)
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()
+	if my_user is None:
+		pass
+	my_user.withdraw="no"
+	db.session.add(my_user) #this doesn't create a new user, it updates the existing
+	db.session.commit()
+	post_availability = "Available"
+		#return render_template('dashboard.html',mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted, post_availability=post_availability)
 
-	return render_template('dashboard.html',mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted)
+	return render_template('dashboard.html',mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted, post_availability=post_availability)
+
+
+
 @app.route('/confirm_email/<token>')
 
 def confirm_email(token):
@@ -142,17 +180,87 @@ def profile():
 	phone_number = current_user.phone_number
 
 
-	return render_template('my-profile.html' ,mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted, address=address, phone_number=phone_number)
+	mail=current_user.email
+	fname = current_user.first_name
+	lname =  current_user.last_name
+	userbalance = current_user.user_balance
+	content_posted = current_user.post_counter
+	posthandler = current_user.daily_post
+	
+	
+	if posthandler == 10:
+		email = current_user.email
+		my_user = db.session.query(User).filter_by(email=email).first()
+		if my_user is None:
+			pass
+		my_user.withdraw="yes"
+		db.session.add(my_user) #this doesn't create a new user, it updates the existing
+		db.session.commit()
+		post_availability = "Not Available"
+		return render_template('my-profile.html' ,mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted, address=address, phone_number=phone_number, post_availability=post_availability )
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()
+	if my_user is None:
+		pass
+	my_user.withdraw="no"
+	db.session.add(my_user) #this doesn't create a new user, it updates the existing
+	db.session.commit()
+	post_availability = "Available"
+
+	
+
+
+
+	return render_template('my-profile.html' ,mail=mail, fname=fname, lname=lname, userbalance=userbalance,post_availability=post_availability, content_posted=content_posted, address=address, phone_number=phone_number)
 
 
 
 @app.route('/cashout')
 @login_required
 def cashout():
-	if current_user.postcounter == '10' and current_user.withdwraw == 'yes':
+	if current_user.post_counter == 10 and current_user.withdraw == 'yes':
 		return 'you can withdraw your money'
-	else:
-		return 'you are not eligable'
+	current_user.post_counter < 10 and current_user.withdraw == 'no'
+	return 'you are not eligable'
+
+
+
+
+
+######################################Posting News And Monitoring Code#####################################
+@app.route('/post')
+@login_required
+def posts():
+
+	mail=current_user.email
+	fname = current_user.first_name
+	lname =  current_user.last_name
+	userbalance = current_user.user_balance
+	content_posted = current_user.post_counter
+	posthandler = current_user.daily_post
+
+	if posthandler == 10:
+		email = current_user.email
+		my_user = db.session.query(User).filter_by(email=email).first()
+		if my_user is None:
+			pass
+		my_user.withdraw="yes"
+		db.session.add(my_user) #this doesn't create a new user, it updates the existing
+		db.session.commit()
+		post_availability = "Not Available"
+		return render_template('postcontent.html',mail=mail, fname=fname, lname=lname, userbalance=userbalance, content_posted=content_posted, post_availability=post_availability)
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()
+	if my_user is None:
+		pass
+	my_user.withdraw="no"
+	db.session.add(my_user) #this doesn't create a new user, it updates the existing
+	db.session.commit()
+	post_availability = "Available"
+	return render_template('postcontent.html',content_posted=content_posted,posthandler=posthandler,userbalance=userbalance,post_availability=post_availability)
+
+
+
 
 @app.route('/addpost', methods=['POST'])
 def addpost():
@@ -162,48 +270,115 @@ def addpost():
 	location = request.form['postlocation']
 	#file_attach = request.files['']
 	content = request.form['content']
-	if posttype == 'Politics' :
-		
+
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()
+	if posttype == 'politics' and my_user.post_counter < 10 and my_user.daily_post < 10 and my_user.daily_post < 1000 :
 		post = Politics(post_type=posttype,post_title=post_title, posted_by=posted_by, location=location, content=content, date_posted=datetime.now())
 		db.session.add(post)
 		email = current_user.email
 		my_user = db.session.query(User).filter_by(email=email).first()
 		if my_user is None:
 			pass
-		#db.session.add(my_user)
+
+		
 		#counting =  my_user.post_counter + 1
 		#counting =str(counting)
-		my_user.post_counter+= 1
+		my_user.post_counter += 1
+		my_user.daily_post += 1
+		my_user.user_balance += 100 
+		#my_user.post_counter=counts 
+		db.session.add(my_user) #t
+		db.session.commit()
+		return "Posted" + posted_by
+	
+	#my_user.withdraw = "yes"
+	#db.session.add(my_user) #t
+	#db.session.commit()
+	#return 'You no more eligiable please wait for the next 24hours and withdraw yor money'
+
+			
+		
+	
+		
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()	
+	if posttype == 'general' and my_user.post_counter < 10 and my_user.daily_post < 10 and my_user.daily_post < 1000  :
+		post = General(post_type=posttype,post_title=post_title, posted_by=posted_by, location=location, content=content, date_posted=datetime.now())
+		db.session.add(post)
+		db.session.commit()
+
+		email = current_user.email
+		my_user = db.session.query(User).filter_by(email=email).first()
+		if my_user is None:
+			pass
+
+		
+		#counting =  my_user.post_counter + 1
+		#counting =str(counting)
+		my_user.post_counter += 1
+		my_user.daily_post += 1
+		my_user.user_balance += 100 
 		#my_user.post_counter=counts 
 		db.session.add(my_user) #t
 		db.session.commit()
 		return "Posted" + posted_by
 
-	if posttype == 'General' :
-		post = General(post_type=posttype,post_title=post_title, posted_by=posted_by, location=location, content=content, date_posted=datetime.now())
-		db.session.add(post)
-		db.session.commit()
-		return "Posted" + posted_by
-
-	if posttype == 'Entertainment' :
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()
+	if posttype == 'entertainment' and my_user.post_counter < 10 and my_user.daily_post < 10 and my_user.daily_post < 1000 :
 		post = Entertainment(post_type=posttype,post_title=post_title, posted_by=posted_by, location=location, content=content, date_posted=datetime.now())
 		db.session.add(post)
+		email = current_user.email
+		my_user = db.session.query(User).filter_by(email=email).first()
+		if my_user is None:
+			pass
+
+		
+		#counting =  my_user.post_counter + 1
+		#counting =str(counting)
+		my_user.post_counter += 1
+		my_user.daily_post += 1
+		my_user.user_balance += 100 
+		#my_user.post_counter=counts 
+		db.session.add(my_user) #t
 		db.session.commit()
 		return "Posted" + posted_by
 		
-	if posttype == 'Sport':
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()	
+	if posttype == 'sport' and my_user.post_counter < 10 and my_user.daily_post < 10 and my_user.daily_post < 1000  :
 		post = Sport(post_type=posttype,post_title=post_title, posted_by=posted_by, location=location, content=content, date_posted=datetime.now())
 		db.session.add(post)
 		db.session.commit()
 		return "Posted" + posted_by
 
-	if posttype == 'Tech':
+
+	email = current_user.email
+	my_user = db.session.query(User).filter_by(email=email).first()	
+	if posttype == 'tech' and my_user.post_counter < 10 and my_user.daily_post < 10 and my_user.daily_post < 1000 :
 		post = Technology(post_type=posttype,post_title=post_title, posted_by=posted_by, location=location, content=content, date_posted=datetime.now())
 		db.session.add(post)
 		db.session.commit()
-		return "Posted" + posted_by
+
+		email = current_user.email
+		my_user = db.session.query(User).filter_by(email=email).first()
+		if my_user is None:
+			pass
+
+		
+		#counting =  my_user.post_counter + 1
+		#counting =str(counting)
+		my_user.post_counter += 1
+		my_user.daily_post += 1
+		my_user.user_balance += 100 
+		#my_user.post_counter=counts 
+		db.session.add(my_user) #t
+		db.session.commit()
+		flash("Thank You Content Posted")
+		return redirect(url_for('dashboard'))
 	else:
-		return'post type is not selected ot not available'
+		return'post type is not selected or not available'
 
 
 @app.route('/sport/<int:post_id>')
