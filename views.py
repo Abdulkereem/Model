@@ -394,7 +394,7 @@ def EntPost(post_id):
     return render_template('post.html', post=post)
 
 
-
+@app.route('/create')
 @app.before_first_request
 def before_first_request():
 	# db.drop_all()
