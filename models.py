@@ -40,16 +40,7 @@ class General(db.Model):
 	date_posted = db.Column(db.DateTime)
 	display_name = db.Column(db.String(255))
 	post_viewer = db.Column(db.Integer, default=0)
-	def __init__(self,post_type,post_title,posted_by,location,content,date_posted,display_name,post_viewer):
-		self.post_type = post_type
-		self.post_title = post_title
-		self.posted_by = posted_by
-		self.location = locatation
-		self.content = content 
-		self.date_posted = date_posted
-		self.display_name = display_name
-		self.post_viewer = post_viewer
-
+	
 
     
 
@@ -67,15 +58,7 @@ class Politics(db.Model):
 	date_posted = db.Column(db.DateTime)
 	display_name = db.Column(db.String(255))
 	post_viewer = db.Column(db.Integer, default=0)
-	def __init__(self,post_type,post_title,posted_by,location,content,date_posted,display_name,post_viewer):
-		self.post_type = post_type
-		self.post_title = post_title
-		self.posted_by = posted_by
-		self.location = locatation
-		self.content = content 
-		self.date_posted = date_posted
-		self.display_name = display_name
-		self.post_viewer = post_viewer
+
 
 class Entertainment(db.Model):
 	__name__ = "Entertainment"
@@ -89,15 +72,7 @@ class Entertainment(db.Model):
 	date_posted = db.Column(db.DateTime)
 	display_name = db.Column(db.String(255))
 	post_viewer = db.Column(db.Integer, default=0)
-	def __init__(self,post_type,post_title,posted_by,location,content,date_posted,display_name,post_viewer):
-		self.post_type = post_type
-		self.post_title = post_title
-		self.posted_by = posted_by
-		self.location = locatation
-		self.content = content 
-		self.date_posted = date_posted
-		self.display_name = display_name
-		self.post_viewer = post_viewer
+	
 
 class Sport(db.Model):
 	__name__ = 'Sport'
@@ -111,15 +86,7 @@ class Sport(db.Model):
 	date_posted = db.Column(db.DateTime)
 	display_name = db.Column(db.String(255))
 	post_viewer = db.Column(db.Integer, default=0)
-	def __init__(self,post_type,post_title,posted_by,location,content,date_posted,display_name,post_viewer):
-		self.post_type = post_type
-		self.post_title = post_title
-		self.posted_by = posted_by
-		self.location = locatation
-		self.content = content 
-		self.date_posted = date_posted
-		self.display_name = display_name
-		self.post_viewer = post_viewer
+	
 
 class Technology(db.Model):
 	__name__ = 'Technology'
@@ -133,12 +100,4 @@ class Technology(db.Model):
 	date_posted = db.Column(db.DateTime)
 	display_name = db.Column(db.String(255))
 	post_viewer = db.Column(db.Integer, default=0)
-	def __init__(self,post_type,post_title,posted_by,location,content,date_posted,display_name,post_viewer):
-		self.post_type = post_type
-		self.post_title = post_title
-		self.posted_by = posted_by
-		self.location = locatation
-		self.content = content 
-		self.date_posted = date_posted
-		self.display_name = display_name
-		self.post_viewer = post_viewer
+	
